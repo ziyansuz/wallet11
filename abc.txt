@@ -1,0 +1,88 @@
+display clown entry beach radio alone helmet world outdoor hurry rib until
+
+
+## 
+
+const config = require('./config');
+// 打印log的类库
+	const morgan = require('morgan')
+	const bodyParser = require('body-parser');
+	const express = require('express')
+	// 引入promise异常捕获处理
+	require('express-async-errors');
+	
+	const app = express();
+	
+	//注册中间件
+	// log中间件
+	app.use(morgan('combined'));
+	
+	//注册自定义的中间件
+	
+	// 注册body-parser中间件
+	// parse application/x-www-form-urlencoded
+	app.use(bodyParser.urlencoded({ extended: false }));
+	// parse application/json
+	app.use(bodyParser.json());
+	
+	// 注册路由
+	app.use("/users", require('./router/account'));
+	
+	// 注册异常处理中间件
+	app.use((err, req, res, next)=>{
+	    res.fail(err.toString())
+	});
+	
+	//启动
+	app.listen(config.PORT);
+	
+	
+	
+	#### REST中间件
+
+为了方便进行REST结果的返回，我们编写一个`res_md.js`中间件，作用是给每个res对象安装2个方法，注意该中间件注册的顺序尽量放在前面。代码如下：
+
+ 
+	module.exports = function (req, res, next) {
+	  res.success = (data = null) =>{
+	    res.send({
+	        code: 0,
+	        msg: "操作成功",
+	        data: data
+	    })
+	  };
+	  res.fail = (msg)=>{
+	    res.send({
+	        code: -1,
+	        msg: msg
+	    })
+	  };
+	
+	  next();
+	};
+ 
+ 
+## PM2集群搭建
+
+由于NodeJs是单线程，无法利用多核CPU的优势。想要利用多核CPU，就要进行多进程。NodeJs的cluster模块提供了多进程的支持，PM2又进一步增强了该模块的功能。
+
+PM2能实现单机内的多进程集群，充分利用多核CPU的性能，提高网站的性能。如果是多机器的集群，需要使用nginx来搭建。
+
+编写PM2配置文件：
+
+```yaml
+apps:
+  - script   : app.js
+    name: xxx
+    instances: max
+    exec_mode: cluster
+    watch  : true
+    env:
+      NODE_ENV: production
+```
+
+然后指定这个配置文件来运行:
+
+```bash
+pm2 start xxxx.yml
+```
