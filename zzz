@@ -1,0 +1,30 @@
+let ss=https.get(url,(res)=>{
+    // let result=''
+let data=[]
+    res.on("data",chunk=>{
+//         result+=chunk.toString()
+    data.push(chunk)
+    })
+    res.on("end",()=>{
+        return data.toString()
+    })
+})
+
+
+console.log(typeof ss)
+// let aa=JSON.parse(ss)
+console.log(ss)
+// console.log(ss.result[0].timeStamp)
+
+console.log(JSON.stringify(ss))
+// https.get(url, (res) => {
+//     res.on('data', (d) => {
+//         let result=process.stdout.write(d);
+//
+//     })
+//     res.on("end",()=>{
+//         console.log(result)
+//     })
+// }).on('error', (e) => {
+//     console.error(e);
+// });
