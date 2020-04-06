@@ -2,15 +2,15 @@
 
 require('express-async-errors');
 const app = require("express")();
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const morgan = require('morgan')
 
 
 app.use(morgan('combined'));
-
+//express
 app.use(bodyParser.raw({ type: '*/*; charset=utf-8' }))
 app.use(bodyParser.text({ type: '*/*'}))
-app.use(bodyParser.json()); // for parsing application/json
+app.use(app.json()); // for parsing application/json
 
 app.use('/',require('./routers/eth'))
 
